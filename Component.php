@@ -1,11 +1,11 @@
 <?php
 
 /*
- * ExtPHP - ExtJS PHP Wrapper
+ * PHPJs - ExtJS PHP Wrapper
  * 
  * (c) David Mann <ninja@codingninja.com.au>
  *
- * This file is part of the ExtPHP library.
+ * This file is part of the PHPJs library.
  * For the full license. Please see the license file bundled
  * with the source code
  */
@@ -20,7 +20,7 @@ use \PHPJs\Converter\VariableConverter;
  *
  * This class represents a complex javascript type. It is like the {@link \PHPJs\Converter} on steroids
  * and is more specifically tailored towards objects which contain large amounts of code such as CustomFunctions,
- * Objects, Event Handlers, Arrays, Multiple Instances, Etc,etc.
+ * Objects, Event Handlers, Arrays, Multiple Instances, Etc, etc.
  *
  * Usage Example:
  * <pre>
@@ -119,7 +119,7 @@ abstract class Component implements Renderable
      * @deprecated
      */
     public function getRequiredOptions() {
-        throw new \BadMethodCallException('Method "\ExtPHP\PHPJs::getRequiredOptions" is deprecated');
+        throw new \BadMethodCallException('Method "\PHPJs\PHPJs::getRequiredOptions" is deprecated');
     }
     
     /**

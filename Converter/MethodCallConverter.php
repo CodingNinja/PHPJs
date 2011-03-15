@@ -1,23 +1,23 @@
 <?php
 
 /*
- * ExtPHP - ExtJS PHP Wrapper
+ * PHPJs - ExtJS PHP Wrapper
  * 
  * (c) David Mann <ninja@codingninja.com.au>
  *
- * This file is part of the ExtPHP library.
+ * This file is part of the PHPJs library.
  * For the full license. Please see the license file bundled
  * with the source code
  */
 
-namespace ExtPHP\Converter;
+namespace PHPJs\Converter;
 
-use ExtPHP\Converter;
+use PHPJs\Converter;
 
 /**
  * MethodCallConverter
  *
- * @package     ExtPHP
+ * @package     PHPJs
  * @subpackage  Converter
  * @author      David Mann <ninja@codingninja.com.au>
  * @copyright   David Mann

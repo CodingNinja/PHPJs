@@ -1,11 +1,11 @@
 <?php
 
 /*
- * ExtPHP - ExtJS PHP Wrapper
+ * PHPJs - ExtJS PHP Wrapper
  * 
  * (c) David Mann <ninja@codingninja.com.au>
  *
- * This file is part of the ExtPHP library.
+ * This file is part of the PHPJs library.
  * For the full license. Please see the license file bundled
  * with the source code
  */
@@ -62,7 +62,7 @@ class ArrayConverter extends Converter
   /**
    * ArrayConverter::getDependencies()
    *
-   * @return
+   * @return array An array of {@link \PHPJs\Component}'s
    */
   public function getDependencies()
   {
@@ -72,7 +72,7 @@ class ArrayConverter extends Converter
   /**
    * ArrayConverter::__toString()
    *
-   * @return
+   * @return string The array in "javascript" form
    */
   public function __toString()
   {

@@ -1,15 +1,14 @@
 <?php
 
 /*
- * ExtPHP - ExtJS PHP Wrapper
+ * PHPJs - ExtJS PHP Wrapper
  * 
  * (c) David Mann <ninja@codingninja.com.au>
  *
- * This file is part of the ExtPHP library.
+ * This file is part of the PHPJs library.
  * For the full license. Please see the license file bundled
  * with the source code
  */
-
 namespace PHPJs\Converter;
 
 use PHPJs\Converter;
@@ -28,9 +27,14 @@ class VariableConverter extends Converter
     $this->includeVar = (boolean)$includeVar;
   }
 
+
+  /**
+   * ArrayConverter::__toString()
+   *
+   * @return string The variable in "javascript" form
+   */
   public function __toString()
   {
-    return sprintf('%s%s = %s;', ($this->includeVar ? 'var ' : ''), $this->varName, $this->
-      value);
+    return sprintf('%s%s = %s;', ($this->includeVar ? 'var ' : ''), $this->varName, $this->value);
   }
 }
