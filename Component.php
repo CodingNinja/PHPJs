@@ -216,7 +216,7 @@ abstract class Component implements Renderable
             throw new \InvalidArgumentException ( sprintf ( 'Option "%s" is not a valid option.', $key ) );
         }
         if ($value instanceof Component) {
-            $value->setType ( self::XTYPE );
+            $value->setType ( self::JSON );
         }
         $this->options [$key] = Converter::getConverter ( $value );
         

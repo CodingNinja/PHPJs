@@ -182,14 +182,14 @@ abstract class Manager
     /**
      * Create an XType component
      *
-     * Proxy method to the {@link Manager::ComponentFactory()} method to include the "{@link Component::XTYPE}" switch
+     * Proxy method to the {@link Manager::ComponentFactory()} method to include the "{@link Component::JSON}" switch
      *
      * @param string $xtype The XType to use when rendering the component
      * @param array $config The configuration for the component
      * @return Component The component that was created
      */
     public function componentFromXType($xtype, $config) {
-        return $this->componentFactory ( $xtype, $config, Component::XTYPE );
+        return $this->componentFactory ( $xtype, $config, Component::JSON );
     }
     
     /**
