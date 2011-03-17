@@ -1,7 +1,7 @@
 <?php
 
 /*
- * PHPJs - ExtJS PHP Wrapper
+ * PHPJs - Javascript PHP Wrapper
  * 
  * (c) David Mann <ninja@codingninja.com.au>
  *
@@ -349,7 +349,7 @@ abstract class Component implements Renderable
      * @param bool $includeXType Include the name as the "xtype" config value?
      * @return string The rendered hash
      */
-    public function renderForHash($includeXType = false) {
+    public function renderForJson($includeXType = false) {
         $config = $this->options;
         $data = array ();
         
@@ -371,23 +371,12 @@ abstract class Component implements Renderable
     }
     
     /**
-     * Render as an hash with XType
-     *
-     * Render's the curernt component as a JavascriptHash with the xtype key included.
-     *
-     * @return string The object hash
-     */
-    public function renderForXtype() {
-        return $this->renderForHash ( true );
-    }
-    
-    /**
      * Component::renderForObject()
      *
      * @return
      */
     public function renderForObject() {
-        return sprintf ( "new %s(%s)", $this->getName (), $this->renderForHash () );
+        return sprintf ( "new %s(%s)", $this->getName (), $this->renderForJson () );
     }
     
     /**

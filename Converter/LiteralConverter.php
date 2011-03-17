@@ -1,7 +1,7 @@
 <?php
 
 /*
- * PHPJs - ExtJS PHP Wrapper
+ * PHPJs - Javascript PHP Wrapper
  * 
  * (c) David Mann <ninja@codingninja.com.au>
  *
