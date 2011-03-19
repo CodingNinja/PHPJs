@@ -31,6 +31,8 @@ use PHPJs\Converter\LiteralConverter;
 class ArrayConverter extends Converter
 {
   protected $dependencies = array();
+  
+  protected $isAssociative = false;
 
   /**
    * ArrayConverter::__construct()
@@ -54,9 +56,22 @@ class ArrayConverter extends Converter
       {
         $values[$key] = self::getConverter($value);
       }
+      if(is_string($key) && !is_numeric($key)) {
+          $this->setIsAssoc(true);
+      }
     }
 
     $this->value = $values;
+  }
+  
+  public function setIsAssoc($bool) {
+      $this->isAssociative = $bool;
+      
+      return $this;
+  }
+  
+  public function getIsAssoc() {
+      return $this->isAssociative;
   }
 
   /**
@@ -76,6 +91,15 @@ class ArrayConverter extends Converter
    */
   public function __toString()
   {
-    return '[' . implode(', ', array_values($this->value)) . ']';
+    if(!$this->isAssociative) {
+        return '[' . implode(', ', array_values($this->value)) . ']';
+    }else{
+        $retval = array();
+        foreach($this->value as $key=>$value) {
+            $retval[] = (string) $key . ': ' . (string) $value;
+        } 
+        
+        return '{' . implode(', ', $retval) . '}';
+    }
   }
 }
