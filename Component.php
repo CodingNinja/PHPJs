@@ -2,7 +2,7 @@
 
 /*
  * PHPJs - Javascript PHP Wrapper
- * 
+ *
  * (c) David Mann <ninja@codingninja.com.au>
  *
  * This file is part of the PHPJs library.
@@ -47,24 +47,24 @@ use PHPJs\Converter\VariableConverter;
  */
 abstract class Component implements Renderable, \ArrayAccess
 {
-    
+
     const JSON = 0;
-    
+
     const OBJ = 1;
-    
+
     protected $types = array (
-        self::JSON => 'json', 
-        self::OBJ => 'object' 
+        self::JSON => 'json',
+        self::OBJ => 'object'
     );
-    
+
     protected $dependencies = array ();
-    
+
     protected $options = array ();
-    
+
     protected $requiredOptions = array ();
-    
+
     public static $optionFilters = array ();
-    
+
     /**
      * Constructor
      *
@@ -77,25 +77,25 @@ abstract class Component implements Renderable, \ArrayAccess
      */
     public function __construct($name, $config = array(), $type = self::OBJ) {
         $config = ( array ) $this->filterConfig ( $config );
-        
+
         foreach($this->getDefaults() as $key=>$value) {
             $this->addOption($key, $value);
         }
-        
+
         if (! (is_array ( $config ))) {
             throw new \InvalidArgumentException ( sprintf ( 'Unable to load passed configuration of type "%s"', gettype ( $config ) ) );
         }
-        
+
         $this->setOptions ( $config );
-        
+
         if ($diff = array_diff ( $this->requiredOptions, array_merge ( array_keys ( array_merge ( $this->options, $config ) ), array_keys ( $config ) ) )) {
             throw new \InvalidArgumentException ( sprintf ( '%s requires the following options: \'%s\'.', get_class ( $this ), implode ( '\', \'', $diff ) ) );
         }
-        
+
         $this->setType ( $type )->setName ( $name );
         $this->initialize ();
     }
-    
+
     /**
      * Get the component config
      *
@@ -106,18 +106,18 @@ abstract class Component implements Renderable, \ArrayAccess
     public function getOptions() {
         $requiredKeys = $this->requiredOptions;
         $data = array_diff_key ( $this->options, array_combine ( $requiredKeys, array_fill ( 0, count ( $requiredKeys ), null ) ) );
-        
+
         return $data;
     }
-    
+
     public function getOption($key, $default = null) {
         return isset ( $this->options [$key] ) ? $this->options [$key] : $default;
     }
-    
+
     protected function getDefaults() {
         return array();
     }
-    
+
     /**
      * Add Required Options
      *
@@ -129,7 +129,7 @@ abstract class Component implements Renderable, \ArrayAccess
     public function getRequiredOptions() {
         throw new \BadMethodCallException ( 'Method "\PHPJs\PHPJs::getRequiredOptions" is deprecated' );
     }
-    
+
     /**
      * Add options
      *
@@ -140,13 +140,13 @@ abstract class Component implements Renderable, \ArrayAccess
      */
     public function addOptions(array $data) {
         array_map ( array (
-            $this, 
-            'addOption' 
+            $this,
+            'addOption'
         ), $data );
-        
+
         return $this;
     }
-    
+
     /**
      * Remove an option
      *
@@ -159,7 +159,7 @@ abstract class Component implements Renderable, \ArrayAccess
         unset ( $this->options [$key] );
         return $this;
     }
-    
+
     /**
      * Component::addOption()
      *
@@ -169,10 +169,10 @@ abstract class Component implements Renderable, \ArrayAccess
      */
     public function addOption($key, $default = null) {
         $this->options [$key] = Converter::getConverter ( $default );
-        
+
         return $this;
     }
-    
+
     /**
      * Component::addRequiredOption()
      *
@@ -181,10 +181,10 @@ abstract class Component implements Renderable, \ArrayAccess
      */
     public function addRequiredOption($key) {
         $this->requiredOptions [] = $key;
-        
+
         return $this;
     }
-    
+
     /**
      * Set the config
      *
@@ -197,7 +197,7 @@ abstract class Component implements Renderable, \ArrayAccess
         if (! is_array ( $config )) {
             return $this;
         }
-        
+
         $invalid = array ();
         foreach ( $config as $key => $value ) {
             try {
@@ -209,10 +209,10 @@ abstract class Component implements Renderable, \ArrayAccess
         if (count ( $invalid ) > 0) {
             throw new \InvalidArgumentException ( sprintf ( 'Options "%s" are not supported. Only "%s" are supported.', implode ( ', ', $invalid ), print_r ( $this->options, true ) ) );
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Set an option
      *
@@ -226,13 +226,13 @@ abstract class Component implements Renderable, \ArrayAccess
         if (! array_key_exists ( $key, $this->options )) {
             throw new \InvalidArgumentException ( sprintf ( 'Option "%s" is not a valid option.', $key ) );
         }
-        
+
         $this->options [$key] = Converter::getConverter ( $value );
-        
+
         return $this;
     }
-    
-    
+
+
     /**
      * Initialize a component
      *
@@ -240,7 +240,7 @@ abstract class Component implements Renderable, \ArrayAccess
      */
     public function initialize() {
     }
-    
+
     /**
      * Get render types
      *
@@ -250,11 +250,11 @@ abstract class Component implements Renderable, \ArrayAccess
      */
     public function getTypes() {
         return array (
-            self::JSON, 
-            self::OBJ 
+            self::JSON,
+            self::OBJ
         );
     }
-    
+
     /**
      * Get the type of the current object
      *
@@ -263,7 +263,7 @@ abstract class Component implements Renderable, \ArrayAccess
     public function getType() {
         return $this->type;
     }
-    
+
     /**
      * Set render type
      *
@@ -277,23 +277,23 @@ abstract class Component implements Renderable, \ArrayAccess
         if (! in_array ( $type, $this->getTypes () )) {
             throw new \InvalidArgumentException ( sprintf ( 'Type "%s" is not valid.', $type ) );
         }
-        
+
         $this->type = $type;
-        
+
         return $this;
     }
-    
+
     /**
      * Get name
      *
-     * Return's the current components class or XType
+     * Return's the current components class
      *
      * @return string the Class
      */
     public function getName() {
         return $this->name;
     }
-    
+
     /**
      * Set name
      *
@@ -307,10 +307,10 @@ abstract class Component implements Renderable, \ArrayAccess
             return;
         }
         $this->name = $name;
-        
+
         return $this;
     }
-    
+
     /**
      * Get Uuid
      *
@@ -321,10 +321,10 @@ abstract class Component implements Renderable, \ArrayAccess
     public function getUuid() {
         $hash = md5 ( spl_object_hash ( $this ) );
         $hash = 'component_' . substr ( $hash, 0, 6 );
-        
+
         return $hash;
     }
-    
+
     /**
      * Component to string
      *
@@ -335,7 +335,7 @@ abstract class Component implements Renderable, \ArrayAccess
     public function __tostring() {
         return $this->render ();
     }
-    
+
     /**
      * Render the component
      *
@@ -346,33 +346,27 @@ abstract class Component implements Renderable, \ArrayAccess
     public function render() {
         $typeName = $this->types [$this->type];
         $func = 'renderFor' . ucfirst ( $typeName );
-        
+
         return $this->$func ();
     }
-    
+
     /**
      * Render as Javascript Hash
      *
-     * Render the current component as a javascript hash object. Optional parameter
-     * allows you to set the "xtype" key to {@link self::$name} before render,
+     * Render the current component as a javascript hash object
      *
-     * @param bool $includeXType Include the name as the "xtype" config value?
      * @return string The rendered hash
      */
-    public function renderForJson($includeXType = false) {
+    public function renderForJson() {
         $config = $this->options;
         $data = array ();
-        
-        if ($includeXType) {
-            $config ['xtype'] = new \PHPJs\Converter\StringConverter ( $this->getName () );
-        }
-        
+
         foreach ( $config as $name => $item ) {
             $value = $item;
             if ($item instanceof Component && $item->getType() !== Component::JSON) {
                 $value = new LiteralConverter ( $item->getUuid () );
             }
-            
+
             $data [] = sprintf ( "  \"%s\": %s", $name, $value );
         }
         if(count($data) === 0) {
@@ -380,7 +374,7 @@ abstract class Component implements Renderable, \ArrayAccess
         }
         return "{\n" . implode ( ",\n", $data ) . "\n}";
     }
-    
+
     /**
      * Component::renderForObject()
      *
@@ -389,7 +383,7 @@ abstract class Component implements Renderable, \ArrayAccess
     public function renderForObject() {
         return sprintf ( "new %s(%s)", $this->getName (), $this->renderForJson () );
     }
-    
+
     /**
      * Component::getDependencies()
      *
@@ -403,8 +397,8 @@ abstract class Component implements Renderable, \ArrayAccess
                 if ($data instanceof Component) {
                     $depends [] = $data;
                 } elseif (is_callable ( array (
-                    $data, 
-                    'getDependencies' 
+                    $data,
+                    'getDependencies'
                 ) )) {
                     $depends = array_merge ( $depends, $data->getDependencies () );
                 }
@@ -413,7 +407,7 @@ abstract class Component implements Renderable, \ArrayAccess
         }
         return $this->dependencies;
     }
-    
+
     /**
      * Component::hasDependencies()
      *
@@ -423,19 +417,19 @@ abstract class Component implements Renderable, \ArrayAccess
     public function hasDependencies($refresh = false) {
         return count ( $this->getDependencies ( $refresh ) ) > 0;
     }
-    
+
     public function filterConfig($config) {
         if (! $config) {
             return $config;
         }
-        
+
         foreach ( static::$optionFilters as $filter ) {
             $config = $filter->filter ( $config, $this );
         }
-        
+
         return $config;
     }
-    
+
     public function __call($m, $args) {
         $verb = substr($m, 0, 3);
         $m = strtolower($m[3]) . substr($m, 4);
@@ -444,22 +438,22 @@ abstract class Component implements Renderable, \ArrayAccess
         }elseif($verb === 'get') {
             return $this->getOption($m);
         }
-        
+
         throw new \InvalidArgumentException(sprintf('Invalid method \PHPJs\Component::%s(%s)', $m, var_export($args, true)));
     }
-    
+
     public function offsetGet($offset) {
         return $this->getOption($offset);
     }
-    
+
     public function offsetSet($offset, $value) {
         return $this->setOption($offset, $value);
     }
-    
+
     public function offsetUnset($offset) {
         unset($this->options[$offset]);
     }
-    
+
     public function offsetExists($offset) {
         return isset($this->options[$offset]);
     }
