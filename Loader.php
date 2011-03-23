@@ -25,7 +25,9 @@ namespace PHPJs;
  */
 class Loader
 {
-
+    
+  protected static $dir = '';
+  
   protected static $instance = null;
 
   /**
@@ -49,8 +51,9 @@ class Loader
    *
    * @return void
    */
-  public static function register()
+  public static function register($dir = '')
   {
+    self::$dir = $dir;
     set_include_path(realpath(dirname(__DIR__)) . ';' . get_include_path());
     spl_autoload_register('\PHPJs\Loader::autoload');
   }
@@ -65,6 +68,6 @@ class Loader
    */
   public static function autoload($name)
   {
-    require_once ($name . '.php');
+    require_once (self::$dir . $name . '.php');
   }
 }

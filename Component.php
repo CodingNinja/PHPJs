@@ -12,8 +12,8 @@
 
 namespace PHPJs;
 
-use \PHPJs\Converter\LiteralConverter;
-use \PHPJs\Converter\VariableConverter;
+use PHPJs\Converter\LiteralConverter;
+use PHPJs\Converter\VariableConverter;
 
 /**
  * Base Component Class
@@ -45,7 +45,7 @@ use \PHPJs\Converter\VariableConverter;
  * @author      David Mann <ninja@codingninja.com.au>
  * @copyright   David Mann
  */
-abstract class Component implements Renderable
+abstract class Component implements Renderable, \ArrayAccess
 {
     
     const JSON = 0;
@@ -76,20 +76,20 @@ abstract class Component implements Renderable
      * @param constant $type  The render method for the component
      */
     public function __construct($name, $config = array(), $type = self::OBJ) {
-        $config = (array) $this->filterConfig($config);
+        $config = ( array ) $this->filterConfig ( $config );
         
-        $this->configure ( $config );
+        foreach($this->getDefaults() as $key=>$value) {
+            $this->addOption($key, $value);
+        }
         
         if (! (is_array ( $config ))) {
             throw new \InvalidArgumentException ( sprintf ( 'Unable to load passed configuration of type "%s"', gettype ( $config ) ) );
         }
         
-        $this->configure ();
-        
         $this->setOptions ( $config );
         
         if ($diff = array_diff ( $this->requiredOptions, array_merge ( array_keys ( array_merge ( $this->options, $config ) ), array_keys ( $config ) ) )) {
-            throw new \InvalidArgumentException( sprintf ( '%s requires the following options: \'%s\'.', get_class ( $this ), implode ( '\', \'', $diff ) ) );
+            throw new \InvalidArgumentException ( sprintf ( '%s requires the following options: \'%s\'.', get_class ( $this ), implode ( '\', \'', $diff ) ) );
         }
         
         $this->setType ( $type )->setName ( $name );
@@ -110,6 +110,14 @@ abstract class Component implements Renderable
         return $data;
     }
     
+    public function getOption($key, $default = null) {
+        return isset ( $this->options [$key] ) ? $this->options [$key] : $default;
+    }
+    
+    protected function getDefaults() {
+        return array();
+    }
+    
     /**
      * Add Required Options
      *
@@ -119,7 +127,7 @@ abstract class Component implements Renderable
      * @deprecated
      */
     public function getRequiredOptions() {
-        throw new \BadMethodCallException('Method "\PHPJs\PHPJs::getRequiredOptions" is deprecated');
+        throw new \BadMethodCallException ( 'Method "\PHPJs\PHPJs::getRequiredOptions" is deprecated' );
     }
     
     /**
@@ -129,9 +137,12 @@ abstract class Component implements Renderable
      *
      * @param array $optios The option names to add
      * @return Component The current component for a fluent interface
-     */    
+     */
     public function addOptions(array $data) {
-        array_map(array($this, 'addOption'), $data);
+        array_map ( array (
+            $this, 
+            'addOption' 
+        ), $data );
         
         return $this;
     }
@@ -143,9 +154,9 @@ abstract class Component implements Renderable
      *
      * @param string $key The option key to remove
      * @return Component The current component for a fluent interface
-     */    
+     */
     public function removeOption($key) {
-        unset($this->options[$key]);
+        unset ( $this->options [$key] );
         return $this;
     }
     
@@ -191,7 +202,7 @@ abstract class Component implements Renderable
         foreach ( $config as $key => $value ) {
             try {
                 $this->setOption ( $key, $value );
-            } catch ( \InvalidArgumentException $e ) {
+            } catch (\InvalidArgumentException $e ) {
                 $invalid [] = $key;
             }
         }
@@ -215,15 +226,12 @@ abstract class Component implements Renderable
         if (! array_key_exists ( $key, $this->options )) {
             throw new \InvalidArgumentException ( sprintf ( 'Option "%s" is not a valid option.', $key ) );
         }
-        if ($value instanceof Component) {
-            $value->setType ( self::JSON );
-        }
+        
         $this->options [$key] = Converter::getConverter ( $value );
         
         return $this;
     }
     
-    public abstract function configure();
     
     /**
      * Initialize a component
@@ -231,7 +239,6 @@ abstract class Component implements Renderable
      * @return null
      */
     public function initialize() {
-    
     }
     
     /**
@@ -296,6 +303,9 @@ abstract class Component implements Renderable
      * @return Component The current component instance for a fluid interface
      */
     public function setName($name) {
+        if (! $name) {
+            return;
+        }
         $this->name = $name;
         
         return $this;
@@ -354,19 +364,20 @@ abstract class Component implements Renderable
         $data = array ();
         
         if ($includeXType) {
-      $config['xtype'] = new \PHPJs\Converter\
-            StringConverter ( $this->getName () );
+            $config ['xtype'] = new \PHPJs\Converter\StringConverter ( $this->getName () );
         }
         
         foreach ( $config as $name => $item ) {
             $value = $item;
-            if ($item instanceof Component) {
-                $value = new Literal ( $item->getUuid () );
+            if ($item instanceof Component && $item->getType() !== Component::JSON) {
+                $value = new LiteralConverter ( $item->getUuid () );
             }
             
             $data [] = sprintf ( "  \"%s\": %s", $name, $value );
         }
-        
+        if(count($data) === 0) {
+            return '{}';
+        }
         return "{\n" . implode ( ",\n", $data ) . "\n}";
     }
     
@@ -414,14 +425,42 @@ abstract class Component implements Renderable
     }
     
     public function filterConfig($config) {
-        if(!$config) {
+        if (! $config) {
             return $config;
         }
         
-        foreach(static::$optionFilters as $filter) {
-            $config = $filter->filter($config, $this);
+        foreach ( static::$optionFilters as $filter ) {
+            $config = $filter->filter ( $config, $this );
         }
         
         return $config;
+    }
+    
+    public function __call($m, $args) {
+        $verb = substr($m, 0, 3);
+        $m = strtolower($m[3]) . substr($m, 4);
+        if($verb === 'set') {
+            return $this->setOption($m, $args[0]);
+        }elseif($verb === 'get') {
+            return $this->getOption($m);
+        }
+        
+        throw new \InvalidArgumentException(sprintf('Invalid method \PHPJs\Component::%s(%s)', $m, var_export($args, true)));
+    }
+    
+    public function offsetGet($offset) {
+        return $this->getOption($offset);
+    }
+    
+    public function offsetSet($offset, $value) {
+        return $this->setOption($offset, $value);
+    }
+    
+    public function offsetUnset($offset) {
+        unset($this->options[$offset]);
+    }
+    
+    public function offsetExists($offset) {
+        return isset($this->options[$offset]);
     }
 }
