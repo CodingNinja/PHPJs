@@ -147,7 +147,7 @@ abstract class Manager
      * @return
      */
     public function register(Renderable $component) {
-        $this->resetRender ()->components [] = $component;
+        $this->resetRender()->components [] = $component;
         return $this;
     }
     
@@ -180,19 +180,6 @@ abstract class Manager
     }
     
     /**
-     * Create an XType component
-     *
-     * Proxy method to the {@link Manager::ComponentFactory()} method to include the "{@link Component::JSON}" switch
-     *
-     * @param string $xtype The XType to use when rendering the component
-     * @param array $config The configuration for the component
-     * @return Component The component that was created
-     */
-    public function componentFromXType($xtype, $config) {
-        return $this->componentFactory ( $xtype, $config, Component::JSON );
-    }
-    
-    /**
      * Create an Object component
      *
      * Proxy method to the {@link Manager::ComponentFactory()} method to include the "{@link Component::OBJ}" switch
@@ -220,8 +207,9 @@ abstract class Manager
             throw new \InvalidArgumentException ( 'The configuration you supplied was not a valid array of configuration class.' );
         }
         
-        $coponentClass = $this->getComponentClassFor ( $class );
-        $component = new $coponentClass ( $class, $config, $type );
+        $componentClass = $this->getComponentClassFor ( $class );
+        $component = new $componentClass ( $class, $config, $type );
+        
         $this->register ( $component );
         
         return $component;
