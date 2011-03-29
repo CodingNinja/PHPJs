@@ -2,7 +2,7 @@
 
 /*
  * PHPJs - Javascript PHP Wrapper
- * 
+ *
  * (c) David Mann <ninja@codingninja.com.au>
  *
  * This file is part of the PHPJs library.
@@ -34,9 +34,9 @@ use PHPJs\Converter\NullConverter;
  */
 abstract class Converter implements Renderable
 {
-    
+
     public $value;
-    
+
     /**
      * Constructor
      *
@@ -45,7 +45,7 @@ abstract class Converter implements Renderable
     public function __construct($value) {
         $this->value = $value;
     }
-    
+
     /**
      * Get a converter
      *
@@ -77,15 +77,15 @@ abstract class Converter implements Renderable
             throw new \InvalidArgumentException ( sprintf ( 'Unable to convert value "%s" to javascript.', gettype ( $type ) ) );
         }
     }
-    
+
     public final function getUuid() {
         throw new BadMethodCallException ( 'Function "getUuid" is not supported for converters' );
     }
-    
+
     public function render() {
         return ( string ) $this;
     }
-    
+
     public function getRaw() {
         return $this->value;
     }

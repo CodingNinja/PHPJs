@@ -2,7 +2,7 @@
 
 /*
  * PHPJs - Javascript PHP Wrapper
- * 
+ *
  * (c) David Mann <ninja@codingninja.com.au>
  *
  * This file is part of the PHPJs library.
@@ -25,49 +25,45 @@ namespace PHPJs;
  */
 class Loader
 {
-    
-  protected static $dir = '';
-  
-  protected static $instance = null;
 
-  /**
-   * Constructor
-   */
-  private function __construct()
-  {
+    protected static $dir = '';
 
-  }
+    protected static $instance = null;
 
-  /**
-   * Clone
-   */
-  private function __clone()
-  {
+    /**
+     * Constructor
+     */
+    private function __construct() {
 
-  }
+    }
 
-  /**
-   * Register Autoloader
-   *
-   * @return void
-   */
-  public static function register($dir = '')
-  {
-    self::$dir = $dir;
-    set_include_path(realpath(dirname(__DIR__)) . ';' . get_include_path());
-    spl_autoload_register('\PHPJs\Loader::autoload');
-  }
+    /**
+     * Clone
+     */
+    private function __clone() {
 
-  /**
-   * Autoload a file
-   *
-   * Attempt to auto load the requested files
-   *
-   * @param string $name The name of the class to load
-   * @return void
-   */
-  public static function autoload($name)
-  {
-    require_once (self::$dir . $name . '.php');
-  }
+    }
+
+    /**
+     * Register Autoloader
+     *
+     * @return void
+     */
+    public static function register($dir = '') {
+        self::$dir = $dir;
+        set_include_path ( realpath ( dirname ( __DIR__ ) ) . ';' . get_include_path () );
+        spl_autoload_register ( '\PHPJs\Loader::autoload' );
+    }
+
+    /**
+     * Autoload a file
+     *
+     * Attempt to auto load the requested files
+     *
+     * @param string $name The name of the class to load
+     * @return void
+     */
+    public static function autoload($name) {
+        include_once (self::$dir . $name . '.php');
+    }
 }
