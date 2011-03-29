@@ -249,10 +249,7 @@ abstract class Component implements Renderable, \ArrayAccess
      * @return array The array of render types
      */
     public function getTypes() {
-        return array (
-            self::JSON,
-            self::OBJ
-        );
+        return $this->types;
     }
 
     /**
@@ -274,7 +271,7 @@ abstract class Component implements Renderable, \ArrayAccess
      * @return Component The current component instance for fluid interface
      */
     public function setType($type) {
-        if (! in_array ( $type, $this->getTypes () )) {
+        if (! isset($this->types[$type])) {
             throw new \InvalidArgumentException ( sprintf ( 'Type "%s" is not valid.', $type ) );
         }
 
