@@ -2,7 +2,7 @@
 
 /*
  * PHPJs - Javascript PHP Wrapper
- * 
+ *
  * (c) David Mann <ninja@codingninja.com.au>
  *
  * This file is part of the PHPJs library.
@@ -31,13 +31,13 @@ use \PHPJs\Converter\VariableConverter;
 abstract class Manager
 {
     protected $outputWrapper = false;
-    
+
     protected $components = array ();
-    
+
     protected $rendered = array ();
-    
+
     protected $name = '';
-    
+
     /**
      * Constructor
      *
@@ -49,7 +49,7 @@ abstract class Manager
         }
         $this->name = $name;
     }
-    
+
     /**
      * Get the namagers name
      *
@@ -58,7 +58,7 @@ abstract class Manager
     public function getName() {
         return $this->name;
     }
-    
+
     /**
      * Set the name of the component
      *
@@ -67,10 +67,10 @@ abstract class Manager
      */
     public function setName($name) {
         $this->resetRender ()->name = $name;
-        
+
         return $this;
     }
-    
+
     /**
      * Reset the renderedcache
      *
@@ -78,17 +78,17 @@ abstract class Manager
      */
     public function resetRender() {
         $this->rendered = array ();
-        
+
         return $this;
     }
-    
+
     /**
      * Render's this managers items.
      *
      * @return string The rendered output
      */
     abstract public function render();
-    
+
     /**
      * Manager::getOutputWrapper()
      *
@@ -99,7 +99,7 @@ abstract class Manager
     public function getOutputWrapper() {
         return $this->outputWrapper;
     }
-    
+
     /**
      * Set the output wrapper
      *
@@ -114,12 +114,12 @@ abstract class Manager
         if (! strstr ( $wrapper, '%s' )) {
             throw new \InvalidArgumentException ( sprintf ( 'Output wrapper must contain "%%s". Supplied OutputWrapper:<br /><pre>"%s</pre><br /> did not.', htmlspecialchars ( $wrapper ) ) );
         }
-        
+
         $this->resetRender ()->outputWrapper = $wrapper;
-        
+
         return $this;
     }
-    
+
     /**
      * Render a component
      *
@@ -134,10 +134,10 @@ abstract class Manager
         if (isset ( $this->rendered [$component->getUuid ()] )) {
             return;
         }
-        
+
         return $this->rendered [$component->getUuid ()] = new VariableConverter ( $component->getUuid (), $component->render (), false ) . "\r\n";
     }
-    
+
     /**
      * Register a Component
      *
@@ -150,7 +150,7 @@ abstract class Manager
         $this->resetRender()->components [] = $component;
         return $this;
     }
-    
+
     /**
      * Find a component by *
      *
@@ -162,23 +162,23 @@ abstract class Manager
      */
     public function getComponentBy($ref, $value) {
         $methods = array (
-            'name' => 'getName', 
-            'uuid' => 'getUuid' 
+            'name' => 'getName',
+            'uuid' => 'getUuid'
         );
-        
+
         if (! isset ( $methods [$ref] )) {
             throw new \InvalidArgumentException ( sprintf ( 'Invalid refrence method supplied "%s". Must be one of "%s"', $ref, var_export ( array_keys ( $methods ), true ) ) );
         }
-        
+
         foreach ( $this->components as $component ) {
             if ($component->$method () == $value) {
                 return $component;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Create an Object component
      *
@@ -191,7 +191,7 @@ abstract class Manager
     public function componentFromClassName($name, $config) {
         return $this->componentFactory ( $name, $config, Component::OBJ );
     }
-    
+
     /**
      * Create a new component
      *
@@ -206,15 +206,15 @@ abstract class Manager
         if (! is_array ( $config ) && (! ($config instanceof Config))) {
             throw new \InvalidArgumentException ( 'The configuration you supplied was not a valid array of configuration class.' );
         }
-        
+
         $componentClass = $this->getComponentClassFor ( $class );
         $component = new $componentClass ( $class, $config, $type );
-        
+
         $this->register ( $component );
-        
+
         return $component;
     }
-    
+
     /**
      * Create or get manager
      *
@@ -235,20 +235,20 @@ abstract class Manager
     public static function __callStatic($func, $args) {
         if(substr($func, 0, 3) !== 'get') {
             throw new \InvalidArgumentException(sprintf('Invalid method call to %s::%s', __NAMESPACE__ . '\\' . get_called_class(), $func));
-        }   
-        
+        }
+
         $func = strtolower(substr($func, 3));
-             
+
         if (! Storage::has ( $func )) {
             Storage::create ( $func, get_called_class () );
         }
-        
+
         return Storage::get ( $func );
     }
-    
+
     public function __toString() {
         return $this->render ();
     }
-    
+
     public abstract function getComponentClassFor($class);
 }
