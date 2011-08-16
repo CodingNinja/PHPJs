@@ -1,0 +1,20 @@
+PHPJs
+======
+
+PHJs is a PHP5.3 library which enables developers to write powerful javascript
+from the comfort of PHP.
+
+PHPJs is built ontop of a powerful manager class which knows the existance of all
+current "components" and allows developers to code all their javascript without
+the need to worry about the dependencies between each component.
+
+By utilising powerful PHP5.3 features, we have been able to make PHPJs an extremly
+fast, scalable and powerful solution that is ready for use in enteprise.
+
+PHPJs classes are rarely instatiated and instead, developers should extend the 
+classes it provides to craete powerful, object oriented javascript.
+
+PHPJs even supports writing pure javascript in PHP code. By supporting a fluent API 
+and no set methods, the CustomFunction class enables a developer to write full javascript
+functions in PURE PHP code.
+
